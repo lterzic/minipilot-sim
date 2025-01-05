@@ -65,12 +65,12 @@ public class Bridge : MonoBehaviour
             switch (request.RequestTypeCase) {
                 case Mpsim.Request.RequestTypeOneofCase.ReadAcc:
                     Vector3 accel = m_accelerometer.GetAcceleration();
-                    response.ReadAcc = new Mpsim.ResponseReadAcc {RawAcc = new vec3f { X = accel.x, Y = accel.y, Z = accel.z}};
+                    response.ReadAcc = new Mpsim.ResponseReadAcc {Acc = new Mpsim.Vector3f { X = accel.x, Y = accel.y, Z = accel.z}};
                     response.Success = true;
                     break;
                 case Mpsim.Request.RequestTypeOneofCase.ReadGyro:
                     Vector3 angVel = m_gyroscope.GetAngVelocity();
-                    response.ReadGyro = new Mpsim.ResponseReadGyro {RawAngVel = new vec3f { X = angVel.x, Y = angVel.y, Z = angVel.z}};
+                    response.ReadGyro = new Mpsim.ResponseReadGyro {AngVel = new Mpsim.Vector3f { X = angVel.x, Y = angVel.y, Z = angVel.z}};
                     response.Success = true;
                     break;
                 case Mpsim.Request.RequestTypeOneofCase.WriteMotor:
