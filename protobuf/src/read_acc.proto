@@ -1,0 +1,12 @@
+syntax = "proto3";
+package mpsim;
+
+import "common_types.proto";
+
+message RequestReadAcc {
+    
+}
+
+message ResponseReadAcc {
+    Vector3f acc = 1;
+}

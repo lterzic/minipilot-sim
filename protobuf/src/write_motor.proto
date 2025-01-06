@@ -1,0 +1,11 @@
+syntax = "proto3";
+package mpsim;
+
+message RequestWriteMotor {
+    uint32 motor_index  = 1;
+    float throttle      = 2;
+}
+
+message ResponseWriteMotor {
+    float current_throttle = 1;
+}
