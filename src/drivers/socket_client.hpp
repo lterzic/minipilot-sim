@@ -2,6 +2,7 @@
 
 #include "emblib/driver/io/char_dev.hpp"
 #include "emblib/rtos/mutex.hpp"
+#include <arpa/inet.h>
 
 namespace mpsim {
 
@@ -16,6 +17,7 @@ public:
 
 private:
     int m_socket;
+    sockaddr_in m_server_endpoint;
 
 };
 
