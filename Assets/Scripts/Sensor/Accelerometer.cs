@@ -30,6 +30,7 @@ public class Accelerometer : MonoBehaviour
     public Vector3 GetAcceleration()
     {
         // Add bias and noise to this
+        // TODO: Add mutex to protect this
         return m_acceleration;
     }
 }

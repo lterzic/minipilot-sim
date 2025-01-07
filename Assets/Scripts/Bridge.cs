@@ -8,8 +8,9 @@ using Google.Protobuf;
 
 public class Bridge : MonoBehaviour
 {
-    // TCP server port for creating the bridge socket
+    // Listener port for creating the bridge socket
     public int m_port = 5000;
+    private UdpClient m_listener;
     // Accelerometer
     public Accelerometer m_accelerometer;
     // Gyroscope
@@ -17,48 +18,25 @@ public class Bridge : MonoBehaviour
     // Motor actuators which can be controlled by the Bridge
     public PropMotor[] m_motors;
     // @todo Add Servo[] m_servos;
-    private TcpListener m_listener;
 
     // Start is called before the first frame update
     void Start()
     {
-        m_listener = new TcpListener(IPAddress.Loopback, m_port);
-        m_listener.Start();
-        Thread listenerThread = new Thread(ListenForClients);
+        m_listener = new UdpClient(m_port);
+        Thread listenerThread = new Thread(HandleRequests);
         listenerThread.IsBackground = true; // closes the thread on app quit
         listenerThread.Start();
+        Debug.Log("Started UDP listener...");
     }
 
-    private void ListenForClients()
+    private void HandleRequests()
     {
         while (true) {
-            TcpClient client = null;
-            try {
-                Debug.Log("Waiting for client connection...");
-                client = m_listener.AcceptTcpClient();
-                Debug.Log("Connection established...");
-                
-                HandleRequests(client.GetStream());
-                client.Close();
-            } catch (SocketException e) {
-                Debug.LogError("Client connection broken");
-                Debug.LogException(e);
-                if (client != null)
-                    client.Close();
-            }
-        }
-    }
-
-    private void HandleRequests(NetworkStream stream)
-    {
-        byte[] buffer = new byte[1024];
-        while (true) {
-            int dataSize = stream.Read(buffer);
-            if (dataSize == 0)
-                return;
+            IPEndPoint ipEndPoint = new IPEndPoint(IPAddress.Any, m_port);
+            byte[] buffer = m_listener.Receive(ref ipEndPoint);
             
             // Parse the received request
-            Mpsim.Request request = Mpsim.Request.Parser.ParseFrom(buffer, 0, dataSize);
+            Mpsim.Request request = Mpsim.Request.Parser.ParseFrom(buffer);
             Mpsim.Response response = new Mpsim.Response();
             response.Success = false;
 
@@ -88,7 +66,8 @@ public class Bridge : MonoBehaviour
                     break;
             }
 
-            response.WriteTo(stream);
+            byte[] out_buffer = response.ToByteArray();
+            m_listener.Send(out_buffer, response.CalculateSize(), ipEndPoint);
         }
     }
 }

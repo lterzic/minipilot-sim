@@ -6,7 +6,10 @@ using UnityEngine;
 public class Gyroscope : MonoBehaviour
 {
     private Rigidbody m_rigidbody;
+    // Currently accumulated drift
     private Vector3 m_drift;
+    // Computed angular velocity that is returned on read request
+    private Vector3 m_angularVelocity;
 
     // Start is called before the first frame update
     void Start()
@@ -14,9 +17,15 @@ public class Gyroscope : MonoBehaviour
         m_rigidbody = GetComponent<Rigidbody>();
     }
 
-    public Vector3 GetAngVelocity()
+    void FixedUpdate()
     {
         // add noise and drift
-        return m_rigidbody.angularVelocity;
+        m_angularVelocity = m_rigidbody.angularVelocity;
+    }
+
+    public Vector3 GetAngVelocity()
+    {
+        // TODO: Protect with a mutex
+        return m_angularVelocity;
     }
 }
