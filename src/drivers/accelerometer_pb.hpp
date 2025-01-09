@@ -1,6 +1,6 @@
 #pragma once
 
-#include "socket_client.hpp"
+#include "udp_dev.hpp"
 #include "emblib/driver/sensor/accelerometer.hpp"
 #include "emblib/rtos/mutex.hpp"
 
@@ -9,7 +9,7 @@ namespace mpsim {
 class accelerometer_pb : public emblib::accelerometer {
 
 public:
-    explicit accelerometer_pb(socket_client& socket, emblib::mutex& socket_mutex) :
+    explicit accelerometer_pb(udp_dev& socket, emblib::mutex& socket_mutex) :
         m_socket(socket),
         m_socket_mutex(socket_mutex)
     {}
@@ -37,7 +37,7 @@ public:
     bool read_all_axes(float (&out_data)[3]) noexcept override;
 
 private:
-    socket_client& m_socket;
+    udp_dev& m_socket;
     emblib::mutex& m_socket_mutex;
 
 };

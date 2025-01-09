@@ -9,11 +9,13 @@ static const char* WSL_IP = "127.0.0.1";
 int main()
 {
     static emblib::stdio_dev stdio;
-    static emblib::mutex socket_mutex;
+    
+    static emblib::mutex sensor_mutex;
+    static mpsim::udp_dev sensor_dev(WINDOWS_IP, 5000);
+    static mpsim::udp_dev telemetry_dev(WINDOWS_IP, 25565);
 
-    static mpsim::socket_client socket(WINDOWS_IP, 5000);
-    static mpsim::accelerometer_pb accel(socket, socket_mutex);
-    static mpsim::gyroscope_pb gyro(socket, socket_mutex);
+    static mpsim::accelerometer_pb accel(sensor_dev, sensor_mutex);
+    static mpsim::gyroscope_pb gyro(sensor_dev, sensor_mutex);
 
     mp::devices_s device_drivers {
         .accelerometer = accel,

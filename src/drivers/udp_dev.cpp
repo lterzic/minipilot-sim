@@ -1,4 +1,4 @@
-#include "socket_client.hpp"
+#include "udp_dev.hpp"
 #include <arpa/inet.h>
 #include <iostream>
 #include <sys/socket.h>
@@ -6,7 +6,7 @@
 
 namespace mpsim {
 
-socket_client::socket_client(const char* server_ip, int server_port)
+udp_dev::udp_dev(const char* server_ip, int server_port)
 {
     m_socket = socket(AF_INET, SOCK_DGRAM, 0);
 
@@ -15,17 +15,17 @@ socket_client::socket_client(const char* server_ip, int server_port)
     m_server_endpoint.sin_addr.s_addr = inet_addr(server_ip);
 }
 
-socket_client::~socket_client()
+udp_dev::~udp_dev()
 {
     close(m_socket);
 }
 
-ssize_t socket_client::write(const char* data, size_t size) noexcept
+ssize_t udp_dev::write(const char* data, size_t size) noexcept
 {
     return sendto(m_socket, data, size, 0, (sockaddr*)&m_server_endpoint, sizeof(m_server_endpoint));
 }
 
-ssize_t socket_client::read(char* data, size_t size) noexcept
+ssize_t udp_dev::read(char* data, size_t size) noexcept
 {
     return recvfrom(m_socket, data, size, 0, NULL, 0);
 }
