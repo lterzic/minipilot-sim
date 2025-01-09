@@ -1,29 +1,40 @@
 # Used to compile protobuf files on every build
 
-set(PROTO_SOURCE_DIR ${PROJECT_SOURCE_DIR}/protobuf/src)
-set(PROTO_CPP_OUT_DIR ${PROJECT_SOURCE_DIR}/src/protobuf)
-set(PROTO_CS_OUT_DIR ${PROJECT_SOURCE_DIR}/protobuf/out/cs)
+# Path to the build protobuf compiler
+set(PROTOC ${CMAKE_CURRENT_BINARY_DIR}/../lib/minipilot/lib/protobuf/protoc)
 
-make_directory(${PROTO_CPP_OUT_DIR})
-make_directory(${PROTO_CS_OUT_DIR})
+set(PROTO_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(PROTO_CPP_OUT ${CMAKE_CURRENT_SOURCE_DIR}/out/cpp/pb)
+set(PROTO_PY_OUT ${CMAKE_CURRENT_SOURCE_DIR}/out/py)
+set(PROTO_CS_OUT ${CMAKE_CURRENT_SOURCE_DIR}/out/cs)
 
-add_library(minipilot-sim-proto OBJECT
-    ${PROTO_SOURCE_DIR}/bridge.proto
-    ${PROTO_SOURCE_DIR}/common_types.proto
-    ${PROTO_SOURCE_DIR}/read_acc.proto
-    ${PROTO_SOURCE_DIR}/read_gyro.proto
-    ${PROTO_SOURCE_DIR}/write_motor.proto
-)
+make_directory(${PROTO_CPP_OUT})
+make_directory(${PROTO_PY_OUT})
+make_directory(${PROTO_CS_OUT})
+
+
+# Get all protobuf src files
+file(GLOB PROTO_SRCS ${PROTO_SRC_DIR}/*.proto)
+
+# List of all generated cpp files (1 for each proto source)
+set(PROTO_CC_SRCS "")
+# For each source proto file, create a command which generates all the proto output files
+foreach(_SRC ${PROTO_SRCS})
+    # Replace the .proto extension in the filename with .pb.cc
+    get_filename_component(_SRC_NAME ${_SRC} NAME_WE)
+    set(_PROTO_CC ${PROTO_CPP_OUT}/${_SRC_NAME}.pb.cc)
+
+    # Generate output files from this proto source
+    add_custom_command(
+        OUTPUT ${_PROTO_CC}
+        DEPENDS ${_SRC}
+        COMMAND ${PROTOC} --cpp_out=${PROTO_CPP_OUT} --python_out=${PROTO_PY_OUT} --csharp_out=${PROTO_CS_OUT} -I=${PROTO_SRC_DIR} ${_SRC}
+    )
+    # Add this cpp files to the list to be used by the static library
+    list(APPEND PROTO_CC_SRCS ${_PROTO_CC})
+endforeach()
+
+# Static library with all the generated cpp files
+add_library(minipilot-sim-proto STATIC ${PROTO_CC_SRCS})
 target_link_libraries(minipilot-sim-proto PUBLIC libprotobuf)
-
-# Get the list of proto sources to be used for external compilation
-get_target_property(PROTO_SRC_FILES minipilot-sim-proto SOURCES)
-
-protobuf_generate(
-    TARGET minipilot-sim-proto
-    IMPORT_DIRS ${PROTO_SOURCE_DIR}
-    PROTOC_OUT_DIR ${PROTO_CPP_OUT_DIR}
-)
-
-
-# TODO: Add a command for generating protobuf source files for the language specified by the argument
+target_include_directories(minipilot-sim-proto PUBLIC ${PROTO_CPP_OUT}/..)

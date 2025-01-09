@@ -1,5 +1,5 @@
 syntax = "proto3";
-package mpsim;
+package mpsim.pb;
 
 message RequestWriteMotor {
     uint32 motor_index  = 1;

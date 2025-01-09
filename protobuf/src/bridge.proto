@@ -1,5 +1,5 @@
 syntax = "proto3";
-package mpsim;
+package mpsim.pb;
 
 import "read_acc.proto";
 import "read_gyro.proto";

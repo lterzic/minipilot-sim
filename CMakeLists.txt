@@ -17,11 +17,6 @@ add_executable(minipilot-sim
     src/drivers/udp_dev.cpp
     src/drivers/accelerometer_pb.cpp
     src/drivers/gyroscope_pb.cpp
-    src/protobuf/bridge.pb.cc
-    src/protobuf/common_types.pb.cc
-    src/protobuf/read_acc.pb.cc
-    src/protobuf/read_gyro.pb.cc
-    src/protobuf/write_motor.pb.cc
     src/main.cpp
 )
 
@@ -33,7 +28,5 @@ target_include_directories(minipilot-sim PRIVATE
 # Link dependency libraries to minipilot
 target_link_libraries(minipilot-sim PRIVATE
     minipilot
+    minipilot-sim-proto
 )
-
-# Wait for protobuf compilation before starting to compile minipilot
-add_dependencies(minipilot-sim minipilot-sim-proto)

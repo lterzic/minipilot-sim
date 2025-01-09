@@ -1,6 +1,6 @@
 #include "gyroscope_pb.hpp"
-#include "protobuf/bridge.pb.h"
-#include "protobuf/read_gyro.pb.h"
+#include "pb/bridge.pb.h"
+#include "pb/read_gyro.pb.h"
 #include <mutex>
 #include <string>
 
@@ -14,7 +14,7 @@ bool gyroscope_pb::read_all_axes(float (&out_data)[3]) noexcept
     std::scoped_lock lock(m_socket_mutex);
 
     // Send a protobuf message with a read gyro request
-    mpsim::Request request;
+    pb::Request request;
     std::string out_bytes;
     
     request.mutable_read_gyro();
@@ -25,12 +25,12 @@ bool gyroscope_pb::read_all_axes(float (&out_data)[3]) noexcept
 
     // Wait for a protobuf message and assert it is of type read gyro response
     char buffer[RECV_BUFFER_SIZE];
-    mpsim::Response response;
+    pb::Response response;
     
     ssize_t recv_size = m_socket.read(buffer, RECV_BUFFER_SIZE);
     if (recv_size <= 0 || !response.ParseFromArray(buffer, recv_size))
         return false;
-    if (response.response_type_case() != mpsim::Response::ResponseTypeCase::kReadGyro)
+    if (response.response_type_case() != pb::Response::ResponseTypeCase::kReadGyro)
         return false;
 
     // Put the data in the output array in the default order (x, y, z)
