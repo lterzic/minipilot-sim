@@ -12,7 +12,7 @@ int main()
     
     static emblib::mutex sensor_mutex;
     static mpsim::udp_dev sensor_dev(WINDOWS_IP, 5000);
-    static mpsim::udp_dev telemetry_dev(WINDOWS_IP, 25565);
+    static mpsim::udp_dev telemetry_dev(WSL_IP, 25565);
 
     static mpsim::accelerometer_pb accel(sensor_dev, sensor_mutex);
     static mpsim::gyroscope_pb gyro(sensor_dev, sensor_mutex);
@@ -20,7 +20,8 @@ int main()
     mp::devices_s device_drivers {
         .accelerometer = accel,
         .gyroscope = gyro,
-        .log_device = &stdio
+        .log_device = &stdio,
+        .telemetry_device = &telemetry_dev
     };
 
     return mp::main(device_drivers);

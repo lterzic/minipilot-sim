@@ -13,6 +13,11 @@ public:
     
     ssize_t write(const char* data, size_t size) noexcept override;
     ssize_t read(char* data, size_t size) noexcept override;
+    
+    bool probe() noexcept override
+    {
+        return m_socket != -1;
+    }
 
 private:
     int m_socket;
