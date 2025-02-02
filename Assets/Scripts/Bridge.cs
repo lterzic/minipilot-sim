@@ -67,7 +67,7 @@ public class Bridge : MonoBehaviour
             }
 
             byte[] out_buffer = response.ToByteArray();
-            m_listener.Send(out_buffer, response.CalculateSize(), ipEndPoint);
+            m_listener.Send(out_buffer, out_buffer.Length, ipEndPoint);
         }
     }
 }

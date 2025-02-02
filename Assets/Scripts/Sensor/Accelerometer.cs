@@ -22,15 +22,16 @@ public class Accelerometer : MonoBehaviour
     void FixedUpdate()
     {
         float dt = Time.fixedDeltaTime;
-
         Vector3 velocity = m_rigidbody.velocity;
+        
         m_acceleration = (velocity - m_lastVelocity) / dt;
+        m_lastVelocity = velocity;
     }
 
     public Vector3 GetAcceleration()
     {
         // Add bias and noise to this
         // TODO: Add mutex to protect this
-        return m_acceleration;
+        return transform.InverseTransformDirection(m_acceleration - Physics.gravity);
     }
 }
