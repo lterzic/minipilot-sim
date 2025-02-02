@@ -17,6 +17,7 @@ add_executable(minipilot-sim
     src/drivers/udp_dev.cpp
     src/drivers/accelerometer_pb.cpp
     src/drivers/gyroscope_pb.cpp
+    src/drivers/motor_pb.cpp
     src/main.cpp
 )
 
