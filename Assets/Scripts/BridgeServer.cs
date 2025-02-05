@@ -6,7 +6,7 @@ using System.Threading;
 using UnityEngine;
 using Google.Protobuf;
 
-public class Bridge : MonoBehaviour
+public class BridgeServer : MonoBehaviour
 {
     // Listener port for creating the bridge socket
     public int m_port = 5000;
@@ -36,32 +36,32 @@ public class Bridge : MonoBehaviour
             byte[] buffer = m_listener.Receive(ref ipEndPoint);
             
             // Parse the received request
-            Mpsim.Request request = Mpsim.Request.Parser.ParseFrom(buffer);
-            Mpsim.Response response = new Mpsim.Response();
+            Mpsim.Pb.Request request = Mpsim.Pb.Request.Parser.ParseFrom(buffer);
+            Mpsim.Pb.Response response = new Mpsim.Pb.Response();
             response.Success = false;
 
             switch (request.RequestTypeCase) {
-                case Mpsim.Request.RequestTypeOneofCase.ReadAcc:
+                case Mpsim.Pb.Request.RequestTypeOneofCase.ReadAcc:
                     Vector3 accel = m_accelerometer.GetAcceleration();
-                    response.ReadAcc = new Mpsim.ResponseReadAcc {Acc = new Mpsim.Vector3f { X = accel.x, Y = accel.y, Z = accel.z}};
+                    response.ReadAcc = new Mpsim.Pb.ResponseReadAcc {Acc = new Mpsim.Pb.Vector3f { X = accel.x, Y = accel.y, Z = accel.z}};
                     response.Success = true;
                     break;
-                case Mpsim.Request.RequestTypeOneofCase.ReadGyro:
+                case Mpsim.Pb.Request.RequestTypeOneofCase.ReadGyro:
                     Vector3 angVel = m_gyroscope.GetAngVelocity();
-                    response.ReadGyro = new Mpsim.ResponseReadGyro {AngVel = new Mpsim.Vector3f { X = angVel.x, Y = angVel.y, Z = angVel.z}};
+                    response.ReadGyro = new Mpsim.Pb.ResponseReadGyro {AngVel = new Mpsim.Pb.Vector3f { X = angVel.x, Y = angVel.y, Z = angVel.z}};
                     response.Success = true;
                     break;
-                case Mpsim.Request.RequestTypeOneofCase.WriteMotor:
+                case Mpsim.Pb.Request.RequestTypeOneofCase.WriteMotor:
                     uint motorIndex = request.WriteMotor.MotorIndex;
                     if (motorIndex >= m_motors.Length) {
                         Debug.LogError("Trying to access non-existend motor");
                         break;
                     }
-                    m_motors[motorIndex].SetThrottle(request.WriteMotor.Throttle);
-                    response.WriteMotor.CurrentThrottle = m_motors[motorIndex].GetThrottle();
+                    m_motors[motorIndex].SetThrottle(request.WriteMotor.AngularFreq);
+                    response.WriteMotor = new Mpsim.Pb.ResponseWriteMotor {CurrentAngularFreq = m_motors[motorIndex].GetThrottle()};
                     response.Success = true;
                     break;
-                case Mpsim.Request.RequestTypeOneofCase.None:
+                case Mpsim.Pb.Request.RequestTypeOneofCase.None:
                 default:
                     break;
             }
