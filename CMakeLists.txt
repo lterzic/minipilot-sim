@@ -14,10 +14,10 @@ add_subdirectory("protobuf")
 
 # Source files for minipilot-sim
 add_executable(minipilot-sim
-    src/drivers/udp_dev.cpp
-    src/drivers/accelerometer_pb.cpp
-    src/drivers/gyroscope_pb.cpp
-    src/drivers/motor_pb.cpp
+    src/drivers/bridge/udp_dev.cpp
+    src/drivers/actuators/accelerometer_pb.cpp
+    src/drivers/actuators/gyroscope_pb.cpp
+    src/drivers/actuators/motor_pb.cpp
     src/main.cpp
 )
 

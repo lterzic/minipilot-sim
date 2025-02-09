@@ -1,15 +1,15 @@
 #pragma once
 
-#include "udp_dev.hpp"
-#include "emblib/driver/sensor/accelerometer.hpp"
+#include "drivers/bridge/udp_dev.hpp"
+#include "emblib/driver/sensor/gyroscope.hpp"
 #include "emblib/rtos/mutex.hpp"
 
 namespace mpsim {
 
-class accelerometer_pb : public emblib::accelerometer {
+class gyroscope_pb : public emblib::gyroscope {
 
 public:
-    explicit accelerometer_pb(udp_dev& socket, emblib::mutex& socket_mutex) :
+    explicit gyroscope_pb(udp_dev& socket, emblib::mutex& socket_mutex) :
         m_socket(socket),
         m_socket_mutex(socket_mutex)
     {}
