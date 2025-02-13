@@ -8,6 +8,7 @@ public class Accelerometer : MonoBehaviour
     private Rigidbody m_rigidbody;
     private Vector3 m_lastVelocity;
     private Vector3 m_acceleration;
+    private Vector3 m_output;
     private Vector3 m_bias;
 
     // Start is called before the first frame update
@@ -26,12 +27,13 @@ public class Accelerometer : MonoBehaviour
         
         m_acceleration = (velocity - m_lastVelocity) / dt;
         m_lastVelocity = velocity;
+
+        // Add bias and noise to this
+        m_output = transform.InverseTransformDirection(m_acceleration - Physics.gravity);
     }
 
     public Vector3 GetAcceleration()
     {
-        // Add bias and noise to this
-        // TODO: Add mutex to protect this
-        return transform.InverseTransformDirection(m_acceleration - Physics.gravity);
+        return m_output;
     }
 }
