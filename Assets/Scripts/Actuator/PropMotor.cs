@@ -19,7 +19,8 @@ public class PropMotor : MonoBehaviour
     // Current throttle simulated with the motor time constant
     private FirstOrderResponse m_throttleResponse;
     // Target throttle for simulating non-zero time response
-    private float m_throttleTarget;
+    [Range(0, 1)]
+    public float m_throttleTarget;
 
     // Start is called before the first frame update
     void Start()
