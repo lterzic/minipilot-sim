@@ -156,7 +156,7 @@ Rigidbody:
   m_GameObject: {fileID: 5957261034126047042}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 0
+  m_Drag: 0.1
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
@@ -228,10 +228,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 5957261034126047042}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad66538b0bd9338aca80127a70e8c849, type: 3}
+  m_Script: {fileID: 11500000, guid: 3a915042d5faaf04598e434ac323c8e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_port: 5000
+  m_accelerometer: {fileID: 6693094639981841932}
+  m_gyroscope: {fileID: 8677447996228179440}
   m_motors:
   - {fileID: 7946631431299746793}
   - {fileID: 2316000017861060296}
@@ -350,10 +352,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6926058348704266894}
     m_Modifications:
-    - target: {fileID: -1606803038918963280, guid: 372eec58f545673bc8593ea4e2f98d4e, type: 3}
-      propertyPath: m_ConnectedBody
-      value: 
-      objectReference: {fileID: 7039943583200312816}
     - target: {fileID: 2316082640462552075, guid: 372eec58f545673bc8593ea4e2f98d4e, type: 3}
       propertyPath: m_spinCW
       value: 1
@@ -431,14 +429,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6926058348704266894}
     m_Modifications:
-    - target: {fileID: -1606803038918963280, guid: 372eec58f545673bc8593ea4e2f98d4e, type: 3}
-      propertyPath: m_ConnectedBody
-      value: 
-      objectReference: {fileID: 7039943583200312816}
-    - target: {fileID: 2316082640462552075, guid: 372eec58f545673bc8593ea4e2f98d4e, type: 3}
-      propertyPath: m_spinCW
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6171053182626401370, guid: 372eec58f545673bc8593ea4e2f98d4e, type: 3}
       propertyPath: m_Name
       value: PropMotorBL
@@ -512,14 +502,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6926058348704266894}
     m_Modifications:
-    - target: {fileID: -1606803038918963280, guid: 372eec58f545673bc8593ea4e2f98d4e, type: 3}
-      propertyPath: m_ConnectedBody
-      value: 
-      objectReference: {fileID: 7039943583200312816}
-    - target: {fileID: 2316082640462552075, guid: 372eec58f545673bc8593ea4e2f98d4e, type: 3}
-      propertyPath: m_spinCW
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6171053182626401370, guid: 372eec58f545673bc8593ea4e2f98d4e, type: 3}
       propertyPath: m_Name
       value: PropMotorFR
@@ -593,10 +575,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6926058348704266894}
     m_Modifications:
-    - target: {fileID: -1606803038918963280, guid: 372eec58f545673bc8593ea4e2f98d4e, type: 3}
-      propertyPath: m_ConnectedBody
-      value: 
-      objectReference: {fileID: 7039943583200312816}
     - target: {fileID: 2316082640462552075, guid: 372eec58f545673bc8593ea4e2f98d4e, type: 3}
       propertyPath: m_spinCW
       value: 1

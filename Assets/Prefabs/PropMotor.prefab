@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 8861652112276030423}
   - component: {fileID: 7621595863436887856}
   - component: {fileID: 2316082640462552075}
-  - component: {fileID: -1606803038918963280}
   - component: {fileID: -1503252483911107269}
   m_Layer: 0
   m_Name: PropMotor
@@ -74,25 +73,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f7c05fbe2096ee5f98d494968721194, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_throttle: 0
-  m_thrustCoeff: 1
+  m_thrustCoeff: 10
   m_torqueCoeff: 0.1
+  m_timeConstant: 0.1
   m_spinCW: 0
---- !u!138 &-1606803038918963280
-FixedJoint:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6171053182626401370}
-  m_ConnectedBody: {fileID: 0}
-  m_ConnectedArticulationBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_EnableCollision: 0
-  m_EnablePreprocessing: 1
-  m_MassScale: 1
-  m_ConnectedMassScale: 1
 --- !u!65 &-1503252483911107269
 BoxCollider:
   m_ObjectHideFlags: 0
