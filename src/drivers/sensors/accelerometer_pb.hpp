@@ -29,7 +29,9 @@ public:
 
     float get_noise_density() const noexcept override
     {
-        return 0;
+        // Noise density in micro gs per sqrt(Hz) as per datasheet of LSM6DSOX
+        constexpr float noise_density_ug = 75;
+        return noise_density_ug * G_TO_MPS2 * 1e-6;
     }
 
     bool read_all_axes(float (&out_data)[3]) noexcept override;

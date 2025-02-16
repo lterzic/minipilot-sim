@@ -29,7 +29,9 @@ public:
 
     float get_noise_density() const noexcept override
     {
-        return 0;
+        // Noise density in mdps per sqrt(Hz) as per datasheet of LSM6DSOX
+        constexpr float noise_density_mdps = 3.8;
+        return noise_density_mdps * DEG_TO_RAD * 1e-3;
     }
 
     bool read_all_axes(float (&out_data)[3]) noexcept override;

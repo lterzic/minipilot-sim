@@ -1,5 +1,5 @@
-#include "drivers/actuators/accelerometer_pb.hpp"
-#include "drivers/actuators/gyroscope_pb.hpp"
+#include "drivers/sensors/accelerometer_pb.hpp"
+#include "drivers/sensors/gyroscope_pb.hpp"
 #include "vehicles/unity/quad_x.hpp"
 #include "emblib/driver/io/stdio_dev.hpp"
 #include "mp/vehicles/copter/quadcopter.hpp"
