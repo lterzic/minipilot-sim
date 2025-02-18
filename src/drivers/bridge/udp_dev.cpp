@@ -30,4 +30,18 @@ ssize_t udp_dev::read(char* data, size_t size) noexcept
     return recvfrom(m_socket, data, size, 0, NULL, 0);
 }
 
+bool udp_dev::write_async(const char* data, size_t size, callback_t callback) noexcept
+{
+    callback(write(data, size));
+    return true;
+}
+
+bool udp_dev::read_async(char* data, size_t size, callback_t callback) noexcept
+{
+    m_read_future = std::async([this, &data, &size, &callback]{
+        callback(read(data, size));
+    });
+    return true;
+}
+
 }
