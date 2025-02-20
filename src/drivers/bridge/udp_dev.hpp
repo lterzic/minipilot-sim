@@ -9,7 +9,7 @@ namespace mpsim {
 class udp_dev : public emblib::char_dev {
 
 public:
-    explicit udp_dev(const char* server_ip, int server_port);
+    explicit udp_dev(const char* send_ip, int send_port, int bind_port = -1);
     ~udp_dev();
     
     ssize_t write(const char* data, size_t size) noexcept override;
@@ -29,7 +29,8 @@ public:
 
 private:
     int m_socket;
-    sockaddr_in m_server_endpoint;
+    sockaddr_in m_send_endpoint;
+    sockaddr_in m_recv_endpoint;
 
     std::future<void> m_read_future;
 };
