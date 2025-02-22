@@ -57,8 +57,8 @@ public class BridgeServer : MonoBehaviour
                         Debug.LogError("Trying to access non-existend motor");
                         break;
                     }
-                    m_motors[motorIndex].SetThrottle(request.WriteMotor.AngularFreq);
-                    response.WriteMotor = new Mpsim.Pb.ResponseWriteMotor {CurrentAngularFreq = m_motors[motorIndex].GetThrottle()};
+                    m_motors[motorIndex].SetThrottle(request.WriteMotor.Throttle);
+                    response.WriteMotor = new Mpsim.Pb.ResponseWriteMotor {CurrentThrottle = m_motors[motorIndex].GetThrottle()};
                     response.Success = true;
                     break;
                 case Mpsim.Pb.Request.RequestTypeOneofCase.None:
