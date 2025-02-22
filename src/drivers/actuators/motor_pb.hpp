@@ -6,30 +6,36 @@
 
 namespace mpsim {
 
-static constexpr float UNITY_MOTOR_TIME_CONST = 0.0001f;
 static constexpr auto MOTOR_FILTER_TASK_PERIOD = std::chrono::milliseconds(10); // 20 Hz
 static constexpr float DT = std::chrono::duration<float>(MOTOR_FILTER_TASK_PERIOD).count();
 
 class motor_pb : public emblib::motor {
 
 public:
-    explicit motor_pb(bridge& bridge, size_t index) :
+    explicit motor_pb(bridge& bridge, size_t index, bool dir_ccw, float time_constant) :
         m_bridge(bridge),
         m_index(index),
-        m_speed_filter({DT/(DT + UNITY_MOTOR_TIME_CONST)}, {-UNITY_MOTOR_TIME_CONST/(DT + UNITY_MOTOR_TIME_CONST)})
+        m_dir_ccw(dir_ccw),
+        m_time_constant(time_constant),
+        m_speed_filter({DT/(DT + time_constant)}, {-time_constant/(DT + time_constant)})
     {}
 
-    bool write_speed(float rad_per_sec) noexcept override;
+    bool write_throttle(float throttle) noexcept override;
 
-    bool read_speed(float& rad_per_sec) noexcept override
+    bool read_throttle(float& throttle) noexcept override
     {
-        rad_per_sec = m_speed_filter.get_output();
+        throttle = m_speed_filter.get_output();
         return true;
     }
 
     float get_time_constant() const noexcept override
     {
-        return UNITY_MOTOR_TIME_CONST;
+        return m_time_constant;
+    }
+
+    bool get_direction() const noexcept override
+    {
+        return m_dir_ccw;
     }
 
     void simulate_actual_speed() noexcept
@@ -40,6 +46,8 @@ public:
 private:
     bridge& m_bridge;
     size_t m_index;
+    bool m_dir_ccw;
+    float m_time_constant;
 
     float m_target_speed;
     emblib::iir_tf2<float, 1> m_speed_filter;

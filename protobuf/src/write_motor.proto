@@ -3,9 +3,9 @@ package mpsim.pb;
 
 message RequestWriteMotor {
     uint32 motor_index  = 1;
-    float angular_freq  = 2;
+    float throttle      = 2;
 }
 
 message ResponseWriteMotor {
-    float current_angular_freq = 1;
+    float current_throttle  = 1;
 }
