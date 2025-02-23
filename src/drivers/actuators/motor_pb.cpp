@@ -11,12 +11,15 @@ bool motor_pb::write_throttle(float throttle) noexcept
 
     // Wait for a protobuf message and assert it is of type write motor response
     pb::Response response = m_bridge.send_request(request);    
-    if (!response.success() || response.response_type_case() != pb::Response::ResponseTypeCase::kWriteMotor)
+    if (!response.success() || !response.has_write_motor())
         return false;
 
     // Current motor speed is approximated by a first order
     // linear system approaching the target speed
-    m_target_speed = throttle;
+    m_target_throttle = throttle;
+
+    // Actual throttle received in the response
+    m_read_throttle = response.write_motor().current_throttle();
     return true;
 }
 

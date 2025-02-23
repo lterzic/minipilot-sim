@@ -17,14 +17,15 @@ public:
         m_index(index),
         m_dir_ccw(dir_ccw),
         m_time_constant(time_constant),
-        m_speed_filter({DT/(DT + time_constant)}, {-time_constant/(DT + time_constant)})
+        m_throttle_tf({DT/(DT + time_constant)}, {-time_constant/(DT + time_constant)})
     {}
 
     bool write_throttle(float throttle) noexcept override;
 
     bool read_throttle(float& throttle) noexcept override
     {
-        throttle = m_speed_filter.get_output();
+        // throttle = m_throttle_tf.get_output();
+        throttle = m_read_throttle;
         return true;
     }
 
@@ -40,7 +41,7 @@ public:
 
     void simulate_actual_speed() noexcept
     {
-        m_speed_filter.update(m_target_speed);
+        m_throttle_tf.update(m_target_throttle);
     }
 
 private:
@@ -49,8 +50,9 @@ private:
     bool m_dir_ccw;
     float m_time_constant;
 
-    float m_target_speed;
-    emblib::iir_tf2<float, 1> m_speed_filter;
+    float m_read_throttle;
+    float m_target_throttle;
+    emblib::iir_tf2<float, 1> m_throttle_tf;
 };
 
 }
