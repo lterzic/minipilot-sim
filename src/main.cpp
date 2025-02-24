@@ -13,6 +13,7 @@ int main()
     static emblib::stdio_dev stdio;
     
     static mpsim::udp_dev telemetry_dev(WSL_IP, 25565);
+    static mpsim::udp_dev receiver_dev(WSL_IP, 25564, 25564);
     static mpsim::bridge bridge(WINDOWS_IP, 5000);
 
     static mpsim::accelerometer_pb accel(bridge);
@@ -24,7 +25,8 @@ int main()
         .accelerometer = accel,
         .gyroscope = gyro,
         .log_device = &stdio,
-        .telemetry_device = &telemetry_dev
+        .telemetry_device = &telemetry_dev,
+        .receiver_device = receiver_dev
     };
 
     return mp::main(device_drivers, unity_quad_x);
