@@ -20,7 +20,7 @@ public class Gyroscope : MonoBehaviour
     void FixedUpdate()
     {
         // add noise and drift
-        m_angularVelocity = m_rigidbody.angularVelocity;
+        m_angularVelocity = transform.InverseTransformDirection(m_rigidbody.angularVelocity);
     }
 
     public Vector3 GetAngVelocity()

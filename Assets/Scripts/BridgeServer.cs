@@ -67,7 +67,8 @@ public class BridgeServer : MonoBehaviour
             }
 
             byte[] out_buffer = response.ToByteArray();
-            m_listener.Send(out_buffer, out_buffer.Length, ipEndPoint);
+            if (out_buffer.Length > 0)
+                m_listener.Send(out_buffer, out_buffer.Length, ipEndPoint);
         }
     }
 }
