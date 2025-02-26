@@ -1,6 +1,7 @@
 syntax = "proto3";
 package mpsim.pb;
 
+import "get_state.proto";
 import "read_acc.proto";
 import "read_gyro.proto";
 import "write_motor.proto";
@@ -9,9 +10,10 @@ message Request {
     reserved 1, 2, 3, 4; // in case extra data is needed in the future to match requests to responses
     
     oneof request_type {
-        RequestReadAcc read_acc         = 5;
-        RequestReadGyro read_gyro       = 6;
-        RequestWriteMotor write_motor   = 7;
+        RequestGetState get_state       = 5;
+        RequestReadAcc read_acc         = 6;
+        RequestReadGyro read_gyro       = 7;
+        RequestWriteMotor write_motor   = 8;
     }
 }
 
@@ -20,8 +22,9 @@ message Response {
     
     bool success = 1;
     oneof response_type {
-        ResponseReadAcc read_acc        = 5;
-        ResponseReadGyro read_gyro      = 6;
-        ResponseWriteMotor write_motor  = 7;
+        ResponseGetState get_state      = 5;
+        ResponseReadAcc read_acc        = 6;
+        ResponseReadGyro read_gyro      = 7;
+        ResponseWriteMotor write_motor  = 8;
     }
 }

@@ -1,8 +1,8 @@
 #include "drivers/sensors/accelerometer_pb.hpp"
 #include "drivers/sensors/gyroscope_pb.hpp"
-#include "vehicles/unity/quad_x.hpp"
+#include "unity/state_pb.hpp"
+#include "unity/vehicles/quad_x.hpp"
 #include "emblib/driver/io/stdio_dev.hpp"
-#include "mp/vehicles/copter/quadcopter.hpp"
 #include "mp/main.hpp"
 
 static const char* WINDOWS_IP = "172.21.48.1";
@@ -19,6 +19,7 @@ int main()
     static mpsim::accelerometer_pb accel(bridge);
     static mpsim::gyroscope_pb gyro(bridge);
     
+    static mpsim::unity::state_pb state_est(bridge);
     static mpsim::unity::quad_x unity_quad_x(bridge);
 
     mp::devices_s device_drivers {
@@ -29,5 +30,5 @@ int main()
         .receiver_device = receiver_dev
     };
 
-    return mp::main(device_drivers, unity_quad_x);
+    return mp::main(device_drivers, state_est, unity_quad_x);
 }

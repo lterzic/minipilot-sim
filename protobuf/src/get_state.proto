@@ -1,0 +1,16 @@
+syntax = "proto3";
+package mpsim.pb;
+
+import "types_sim.proto";
+
+message RequestGetState {
+
+}
+
+message ResponseGetState {
+    Vector3f position = 1;
+    Vector3f velocity = 2;
+    Vector3f acceleration = 3;
+    Vector3f angular_velocity = 4;
+    Vector4f rotationq = 5;
+}
