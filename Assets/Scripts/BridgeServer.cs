@@ -19,6 +19,11 @@ public class BridgeServer : MonoBehaviour
     public PropMotor[] m_motors;
     // @todo Add Servo[] m_servos;
 
+    // Used for getting the real state of the vehicle
+    public Rigidbody m_vehicleRigidbody;
+    // This is updated in FixedUpdate and sent on request
+    private Mpsim.Pb.ResponseGetState m_stateResponse;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -27,6 +32,17 @@ public class BridgeServer : MonoBehaviour
         listenerThread.IsBackground = true; // closes the thread on app quit
         listenerThread.Start();
         Debug.Log("Started UDP listener...");
+    }
+
+    void FixedUpdate()
+    {
+        m_stateResponse = new Mpsim.Pb.ResponseGetState {
+            Position = ProtobufUtils.CreatePbVector(m_vehicleRigidbody.position),
+            Velocity = ProtobufUtils.CreatePbVector(m_vehicleRigidbody.velocity),
+            Acceleration = ProtobufUtils.CreatePbVector(m_accelerometer.GetRealAcceleration()),
+            AngularVelocity = ProtobufUtils.CreatePbVector(m_gyroscope.GetRealAngularVelocity()),
+            Rotationq = ProtobufUtils.CreatePbVector(m_vehicleRigidbody.rotation)
+        };
     }
 
     private void HandleRequests()
@@ -41,14 +57,16 @@ public class BridgeServer : MonoBehaviour
             response.Success = false;
 
             switch (request.RequestTypeCase) {
+                case Mpsim.Pb.Request.RequestTypeOneofCase.GetState:
+                    response.GetState = m_stateResponse;
+                    response.Success = true;
+                    break;
                 case Mpsim.Pb.Request.RequestTypeOneofCase.ReadAcc:
-                    Vector3 accel = m_accelerometer.GetAcceleration();
-                    response.ReadAcc = new Mpsim.Pb.ResponseReadAcc {Acc = new Mpsim.Pb.Vector3f { X = accel.x, Y = accel.y, Z = accel.z}};
+                    response.ReadAcc = new Mpsim.Pb.ResponseReadAcc {Acc = ProtobufUtils.CreatePbVector(m_accelerometer.GetAcceleration())};
                     response.Success = true;
                     break;
                 case Mpsim.Pb.Request.RequestTypeOneofCase.ReadGyro:
-                    Vector3 angVel = m_gyroscope.GetAngVelocity();
-                    response.ReadGyro = new Mpsim.Pb.ResponseReadGyro {AngVel = new Mpsim.Pb.Vector3f { X = angVel.x, Y = angVel.y, Z = angVel.z}};
+                    response.ReadGyro = new Mpsim.Pb.ResponseReadGyro {AngVel = ProtobufUtils.CreatePbVector(m_gyroscope.GetAngularVelocity())};
                     response.Success = true;
                     break;
                 case Mpsim.Pb.Request.RequestTypeOneofCase.WriteMotor:
