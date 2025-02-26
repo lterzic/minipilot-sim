@@ -32,8 +32,14 @@ public class Accelerometer : MonoBehaviour
         m_output = transform.InverseTransformDirection(m_acceleration - Physics.gravity);
     }
 
+    // TODO: Rename to Read() or ReadAcceleration()
     public Vector3 GetAcceleration()
     {
         return m_output;
+    }
+
+    public Vector3 GetRealAcceleration()
+    {
+        return m_acceleration;
     }
 }
