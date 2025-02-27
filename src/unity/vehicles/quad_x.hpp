@@ -4,36 +4,8 @@
 #include "drivers/actuators/motor_pb.hpp"
 #include "unity/constants.hpp"
 #include "mp/vehicles.hpp"
-#include "mp/controllers.hpp"
 
 namespace mpsim::unity {
-
-class dummy_controller : public mp::copter_controller {
-
-public:
-    bool set_target_w(const emblib::vector3f& target_w, float target_thrust) noexcept override
-    {
-        return true;
-    }
-
-    bool set_target_v(const emblib::vector3f& target_v, float direction) noexcept override
-    {
-        return true;
-    }
-    
-    void update(const mp::state_s& state, float dt) noexcept override
-    {}
-
-    emblib::vector3f get_torque() const noexcept override
-    {
-        return {0, 0, 0};
-    }
-
-    float get_thrust() const noexcept override
-    {
-        return 0;
-    }
-};
 
 class quad_x : public mp::quadcopter {
     
@@ -44,9 +16,9 @@ class quad_x : public mp::quadcopter {
 
     static inline const mp::quadcopter_params_s PARAMETERS {
         {
-            .mass = 1.f,
-            .moment_of_inertia = emblib::vector3f({1, 1, 2}).as_diagonal() * 0.4f,
-            .lin_drag_c = 0.1f
+            .mass = 1.2f,
+            .moment_of_inertia = emblib::vector3f({1, 1, 2}).as_diagonal() * 0.1f,
+            .lin_drag_c = 1.f
         },
         .width_half = 0.2f,
         .length_half = 0.2f,
@@ -69,8 +41,8 @@ public:
         m_motor_fr(bridge, (int)motor_index_e::FR, true, PROP_MOTOR_TIME_CONSTANT),
         m_motor_fl(bridge, (int)motor_index_e::FL, false, PROP_MOTOR_TIME_CONSTANT),
         m_motor_bl(bridge, (int)motor_index_e::BL, true, PROP_MOTOR_TIME_CONSTANT),
-        m_motor_br(bridge, (int)motor_index_e::BR, false, PROP_MOTOR_TIME_CONSTANT)
-        // m_controller(PARAMETERS)
+        m_motor_br(bridge, (int)motor_index_e::BR, false, PROP_MOTOR_TIME_CONSTANT),
+        m_controller(PARAMETERS)
     {}
 
     bool init() noexcept override
@@ -89,9 +61,7 @@ private:
     motor_pb m_motor_bl;
     motor_pb m_motor_br;
 
-    // mp::copter_controller_pid m_controller;
-    dummy_controller m_controller;
-
+    mp::copter_controller_pid m_controller;
 };
 
 }
