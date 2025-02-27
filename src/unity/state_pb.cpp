@@ -28,7 +28,7 @@ void state_pb::update(const mp::sensor_data_s& input, float dt) noexcept
     m_state.velocity = pb_to_mp_vector3f(v);
     m_state.acceleration = pb_to_mp_vector3f(a);
     m_state.angular_velocity = -pb_to_mp_vector3f(w);
-    m_state.rotationq = {q.w(), MP_TRANSFORM.matmul(mp::vector3f({q.x(), q.y(), q.z()}))};
+    m_state.rotationq = {q.w(), -MP_TRANSFORM.matmul(mp::vector3f({q.x(), q.y(), q.z()}))};
 }
 
 }
