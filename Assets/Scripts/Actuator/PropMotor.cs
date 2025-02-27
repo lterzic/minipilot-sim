@@ -26,8 +26,7 @@ public class PropMotor : MonoBehaviour
     void Start()
     {
         m_rigidbody = GetComponent<Rigidbody>();
-        m_throttleResponse = new FirstOrderResponse(m_timeConstant, 0);
-        m_throttleTarget = 0;
+        m_throttleResponse = new FirstOrderResponse(m_timeConstant, m_throttleTarget);
     }
 
     void FixedUpdate()
