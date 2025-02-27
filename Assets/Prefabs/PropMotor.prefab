@@ -77,6 +77,7 @@ MonoBehaviour:
   m_torqueCoeff: 0.1
   m_timeConstant: 0.1
   m_spinCW: 0
+  m_throttleTarget: 0
 --- !u!65 &-1503252483911107269
 BoxCollider:
   m_ObjectHideFlags: 0
