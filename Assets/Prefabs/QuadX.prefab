@@ -211,6 +211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a326c0e171a224c3fa3aa874ea9f36e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_NoiseDensity: 0.0007355
 --- !u!114 &8677447996228179440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -223,6 +224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1063a4b16cf4ad66f84c14ab91493880, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_NoiseDensity: 0.00006322
 --- !u!114 &8466923571427602098
 MonoBehaviour:
   m_ObjectHideFlags: 0

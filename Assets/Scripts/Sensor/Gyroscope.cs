@@ -5,6 +5,9 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Gyroscope : MonoBehaviour
 {
+    // Noise density in radians per second
+    public float m_NoiseDensity;
+
     private Rigidbody m_rigidbody;
     private Vector3 m_angularVelocity;
     // Currently accumulated drift
@@ -21,8 +24,9 @@ public class Gyroscope : MonoBehaviour
     void FixedUpdate()
     {
         m_angularVelocity = transform.InverseTransformDirection(m_rigidbody.angularVelocity);
-        // add noise and drift
-        m_output = m_angularVelocity;
+        // add drift
+        Vector3 noise = Noise.nextNormalVector(0, m_NoiseDensity * Mathf.Sqrt(Time.fixedDeltaTime));
+        m_output = m_angularVelocity + noise;
     }
 
     // TODO: Rename to Read() or ReadAngularVelocity()

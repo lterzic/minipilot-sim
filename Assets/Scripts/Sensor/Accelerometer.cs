@@ -5,6 +5,9 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Accelerometer : MonoBehaviour
 {
+    // Noise density in radians per second
+    public float m_NoiseDensity;
+
     private Rigidbody m_rigidbody;
     private Vector3 m_lastVelocity;
     private Vector3 m_acceleration;
@@ -28,8 +31,9 @@ public class Accelerometer : MonoBehaviour
         m_acceleration = (velocity - m_lastVelocity) / dt;
         m_lastVelocity = velocity;
 
-        // Add bias and noise to this
-        m_output = transform.InverseTransformDirection(m_acceleration - Physics.gravity);
+        // Add bias
+        Vector3 noise = Noise.nextNormalVector(0, m_NoiseDensity * Mathf.Sqrt(Time.fixedDeltaTime));
+        m_output = transform.InverseTransformDirection(m_acceleration + noise - Physics.gravity);
     }
 
     // TODO: Rename to Read() or ReadAcceleration()
