@@ -224,7 +224,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1063a4b16cf4ad66f84c14ab91493880, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_NoiseDensity: 0.00006322
+  m_noiseDensity: 0.00006323
+  m_driftDensity: 0.005
 --- !u!114 &8466923571427602098
 MonoBehaviour:
   m_ObjectHideFlags: 0

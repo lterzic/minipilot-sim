@@ -6,7 +6,9 @@ using UnityEngine;
 public class Gyroscope : MonoBehaviour
 {
     // Noise density in radians per second
-    public float m_NoiseDensity;
+    public float m_noiseDensity;
+    // Drift is calculated as the random walk of gaussian(0, m_driftDensity*sqrt(dt))
+    public float m_driftDensity;
 
     private Rigidbody m_rigidbody;
     private Vector3 m_angularVelocity;
@@ -24,9 +26,11 @@ public class Gyroscope : MonoBehaviour
     void FixedUpdate()
     {
         m_angularVelocity = transform.InverseTransformDirection(m_rigidbody.angularVelocity);
-        // add drift
-        Vector3 noise = Noise.nextNormalVector(0, m_NoiseDensity * Mathf.Sqrt(Time.fixedDeltaTime));
-        m_output = m_angularVelocity + noise;
+        
+        m_drift += Noise.nextNormalVector(0, m_driftDensity * Mathf.Sqrt(Time.fixedDeltaTime));
+        Vector3 noise = Noise.nextNormalVector(0, m_noiseDensity * Mathf.Sqrt(Time.fixedDeltaTime));
+        
+        m_output = m_angularVelocity + m_drift + noise;
     }
 
     // TODO: Rename to Read() or ReadAngularVelocity()
