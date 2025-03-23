@@ -26,10 +26,10 @@ class quad_x : public mp::quadcopter {
         .torque_coeff = PROP_MOTOR_TORQUE_COEFF
     };
 
-    static inline const sensor_config_s SENSOR_CONFIG {
-        .accelerometer_transform = MP_TRANSFORM,
-        .gyroscope_transform = -MP_TRANSFORM
-    };
+    // static inline const sensor_config_s SENSOR_CONFIG {
+    //     .accelerometer_transform = MP_TRANSFORM,
+    //     .gyroscope_transform = -MP_TRANSFORM
+    // };
 
 public:
     explicit quad_x(bridge& bridge) :
@@ -50,10 +50,10 @@ public:
         return true;
     }
 
-    const sensor_config_s& get_sensor_config() const noexcept override
-    {
-        return SENSOR_CONFIG;
-    }
+    // const sensor_config_s& get_sensor_config() const noexcept override
+    // {
+    //     return SENSOR_CONFIG;
+    // }
 
 private:
     motor_pb m_motor_fr;
