@@ -12,12 +12,12 @@ public:
     explicit udp_dev(const char* send_ip, int send_port, int bind_port = -1);
     ~udp_dev();
     
-    ssize_t write(const char* data, size_t size) noexcept override;
-    ssize_t read(char* data, size_t size) noexcept override;
+    ssize_t write(const char* data, size_t size, emblib::milliseconds timeout = emblib::MAX_MILLISECONDS) noexcept override;
+    ssize_t read(char* data, size_t size, emblib::milliseconds timeout = emblib::MAX_MILLISECONDS) noexcept override;
     bool write_async(const char* data, size_t size, callback_t callback) noexcept override;
     bool read_async(char* data, size_t size, callback_t callback) noexcept override;
     
-    bool probe() noexcept override
+    bool probe(emblib::milliseconds timeout) noexcept override
     {
         return m_socket != -1;
     }

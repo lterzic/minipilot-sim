@@ -30,12 +30,12 @@ udp_dev::~udp_dev()
     close(m_socket);
 }
 
-ssize_t udp_dev::write(const char* data, size_t size) noexcept
+ssize_t udp_dev::write(const char* data, size_t size, emblib::milliseconds timeout) noexcept
 {
     return sendto(m_socket, data, size, 0, (sockaddr*)&m_send_endpoint, sizeof(m_send_endpoint));
 }
 
-ssize_t udp_dev::read(char* data, size_t size) noexcept
+ssize_t udp_dev::read(char* data, size_t size, emblib::milliseconds timeout) noexcept
 {
     return recvfrom(m_socket, data, size, 0, NULL, 0);
 }

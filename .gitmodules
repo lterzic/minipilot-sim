@@ -1,0 +1,3 @@
+[submodule "lib/minipilot"]
+	path = lib/minipilot
+	url = https://github.com/terzaterza/minipilot
