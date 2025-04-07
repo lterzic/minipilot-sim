@@ -1,7 +1,7 @@
 # Used to compile protobuf files on every build
 
 # Path to the build protobuf compiler
-set(PROTOC ${CMAKE_CURRENT_BINARY_DIR}/../lib/minipilot/lib/protobuf/protoc)
+set(PROTOC ${PROJECT_BINARY_DIR}/lib/protobuf/protoc)
 
 set(PROTO_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(PROTO_CPP_OUT ${CMAKE_CURRENT_SOURCE_DIR}/out/cpp/pb)

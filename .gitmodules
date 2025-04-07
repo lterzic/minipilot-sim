@@ -1,3 +1,6 @@
 [submodule "lib/minipilot"]
 	path = lib/minipilot
 	url = https://github.com/terzaterza/minipilot
+[submodule "lib/protobuf"]
+	path = lib/protobuf
+	url = https://github.com/protocolbuffers/protobuf
