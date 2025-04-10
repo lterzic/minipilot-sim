@@ -1,7 +1,7 @@
 #pragma once
 
 #include "drivers/bridge/bridge.hpp"
-#include "emblib/driver/sensor/accelerometer.hpp"
+#include <emblib/driver/accelerometer.hpp>
 
 namespace mpsim {
 

@@ -2,20 +2,20 @@
 #include "drivers/sensors/gyroscope_pb.hpp"
 #include "unity/state_pb.hpp"
 #include "unity/vehicles/quad_x.hpp"
-#include "emblib/driver/io/stdio_dev.hpp"
-#include "mp/state_estimators.hpp"
-#include "mp/main.hpp"
+#include <emblib/driver/stdio_dev.hpp>
+#include <mp/state_estimators.hpp>
+#include <mp/mp.hpp>
 
 static const char* WINDOWS_IP = "172.21.48.1";
-static const char* WSL_IP = "127.0.0.1";
+static const char* LOCALHOST_IP = "127.0.0.1";
 
 int main()
 {
     static emblib::stdio_dev stdio;
     
-    static mpsim::udp_dev telemetry_dev(WSL_IP, 25565);
-    static mpsim::udp_dev receiver_dev(WSL_IP, 25564, 25564);
-    static mpsim::bridge bridge(WINDOWS_IP, 5000);
+    static mpsim::udp_dev telemetry_dev(LOCALHOST_IP, 25565);
+    static mpsim::udp_dev receiver_dev(LOCALHOST_IP, 25564, 25564);
+    static mpsim::bridge bridge(LOCALHOST_IP, 5000);
 
     static mpsim::accelerometer_pb accel(bridge);
     static mpsim::gyroscope_pb gyro(bridge);
