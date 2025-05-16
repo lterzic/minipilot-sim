@@ -36,6 +36,7 @@ target_include_directories(minipilot-sim PRIVATE
 
 # Link dependency libraries to minipilot
 target_link_libraries(minipilot-sim PRIVATE
+    emblib
     minipilot
     minipilot-sim-proto
 )

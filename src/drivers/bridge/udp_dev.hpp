@@ -1,6 +1,6 @@
 #pragma once
 
-#include <emblib/driver/char_dev.hpp>
+#include <emblib/driver/io/char_dev.hpp>
 #include <arpa/inet.h>
 #include <future>
 
@@ -12,12 +12,12 @@ public:
     explicit udp_dev(const char* send_ip, int send_port, int bind_port = -1);
     ~udp_dev();
     
-    ssize_t write(const char* data, size_t size, emblib::milliseconds timeout = emblib::milliseconds(-1)) noexcept override;
-    ssize_t read(char* data, size_t size, emblib::milliseconds timeout = emblib::milliseconds(-1)) noexcept override;
+    ssize_t write(const char* data, size_t size, emblib::milliseconds_t timeout = emblib::milliseconds_t(0)) noexcept override;
+    ssize_t read(char* data, size_t size, emblib::milliseconds_t timeout) noexcept override;
     bool write_async(const char* data, size_t size, callback_t callback) noexcept override;
     bool read_async(char* data, size_t size, callback_t callback) noexcept override;
     
-    bool probe(emblib::milliseconds timeout) noexcept override
+    bool probe(emblib::milliseconds_t timeout) noexcept override
     {
         return m_socket != -1;
     }

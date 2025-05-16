@@ -1,7 +1,7 @@
 #pragma once
 
 #include "drivers/bridge/bridge.hpp"
-#include <emblib/driver/motor.hpp>
+#include <emblib/driver/actuator/motor.hpp>
 #include <emblib/dsp/iir.hpp>
 
 namespace mpsim {

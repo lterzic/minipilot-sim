@@ -1,11 +1,12 @@
 #pragma once
 
 #include "drivers/bridge/bridge.hpp"
-#include <emblib/driver/gyroscope.hpp>
+#include <mp/math.hpp>
+#include <emblib/driver/sensor/gyroscope.hpp>
 
 namespace mpsim {
 
-class gyroscope_pb : public emblib::gyroscope {
+class gyroscope_pb : public emblib::gyroscope<emblib::rps_t> {
 
 public:
     explicit gyroscope_pb(bridge& bridge) :
@@ -17,24 +18,38 @@ public:
         return true;
     }
 
-    bool is_data_available() noexcept override
+    rate_t set_rate(rate_t rate) noexcept override
+    {
+        // Can't be changed
+        return get_rate();
+    }
+
+    rate_t get_rate() const noexcept override
+    {
+        // Unity fixed update rate is 250Hz
+        return rate_t(250);
+    }
+
+    bool is_ready() noexcept override
     {
         return true;
     }
 
-    bool read_axis(axis_e axis, float& out_g) noexcept override
+    float get_noise_density() const noexcept override
     {
+        // Noise density in milli dps per sqrt(Hz) as per datasheet of LSM6DSOX
+        constexpr emblib::dps_t noise_density(3.8 * 1e-3);
+        // Change to the same units as the data type
+        return emblib::rps_t(noise_density).value();
+    }
+
+    bool read_axis(axis_e axis, emblib::rps_t& out) noexcept override
+    {
+        // Reading a single axis not used
         return false;
     }
 
-    float get_noise_density() const noexcept override
-    {
-        // Noise density in mdps per sqrt(Hz) as per datasheet of LSM6DSOX
-        constexpr float noise_density_mdps = 3.8;
-        return noise_density_mdps * DEG_TO_RAD * 1e-3;
-    }
-
-    bool read_all_axes(float (&out_data)[3]) noexcept override;
+    bool read(mp::vector<emblib::rps_t, 3>& out) noexcept override;
 
 private:
     bridge& m_bridge;

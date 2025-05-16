@@ -1,8 +1,8 @@
+#include "drivers/bridge/stdio_dev.hpp"
 #include "drivers/sensors/accelerometer_pb.hpp"
 #include "drivers/sensors/gyroscope_pb.hpp"
 #include "unity/state_pb.hpp"
 #include "unity/vehicles/quad_x.hpp"
-#include <emblib/driver/stdio_dev.hpp>
 #include <mp/state_estimators.hpp>
 #include <mp/mp.hpp>
 
@@ -11,7 +11,7 @@ static const char* LOCALHOST_IP = "127.0.0.1";
 
 int main()
 {
-    static emblib::stdio_dev stdio;
+    static mpsim::stdio_dev stdio;
     
     static mpsim::udp_dev telemetry_dev(LOCALHOST_IP, 25565);
     static mpsim::udp_dev receiver_dev(LOCALHOST_IP, 25564, 25564);

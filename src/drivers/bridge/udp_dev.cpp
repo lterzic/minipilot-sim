@@ -30,12 +30,12 @@ udp_dev::~udp_dev()
     close(m_socket);
 }
 
-ssize_t udp_dev::write(const char* data, size_t size, emblib::milliseconds timeout) noexcept
+ssize_t udp_dev::write(const char* data, size_t size, emblib::milliseconds_t timeout) noexcept
 {
     return sendto(m_socket, data, size, 0, (sockaddr*)&m_send_endpoint, sizeof(m_send_endpoint));
 }
 
-ssize_t udp_dev::read(char* data, size_t size, emblib::milliseconds timeout) noexcept
+ssize_t udp_dev::read(char* data, size_t size, emblib::milliseconds_t timeout) noexcept
 {
     return recvfrom(m_socket, data, size, 0, NULL, 0);
 }
@@ -52,7 +52,7 @@ bool udp_dev::read_async(char* data, size_t size, callback_t callback) noexcept
     //     m_read_future.wait();
     // }
     m_read_future = std::async(std::launch::async, [this, &data, &size, &callback]{
-        callback(read(data, size));
+        callback(read(data, size, emblib::milliseconds_t(0)));
     });
     return true;
 }

@@ -1,11 +1,12 @@
 #pragma once
 
 #include "drivers/bridge/bridge.hpp"
-#include <emblib/driver/accelerometer.hpp>
+#include <mp/math.hpp>
+#include <emblib/driver/sensor/accelerometer.hpp>
 
 namespace mpsim {
 
-class accelerometer_pb : public emblib::accelerometer {
+class accelerometer_pb : public emblib::accelerometer<emblib::mpss_t> {
 
 public:
     explicit accelerometer_pb(bridge& bridge) :
@@ -17,24 +18,38 @@ public:
         return true;
     }
 
-    bool is_data_available() noexcept override
+    rate_t set_rate(rate_t rate) noexcept override
     {
-        return true;
+        // Can't be changed
+        return get_rate();
     }
 
-    bool read_axis(axis_e axis, float& out_g) noexcept override
+    rate_t get_rate() const noexcept override
     {
-        return false;
+        // Unity fixed update rate is 250Hz
+        return rate_t(250);
+    }
+
+    bool is_ready() noexcept override
+    {
+        return true;
     }
 
     float get_noise_density() const noexcept override
     {
         // Noise density in micro gs per sqrt(Hz) as per datasheet of LSM6DSOX
-        constexpr float noise_density_ug = 75;
-        return noise_density_ug * G_TO_MPS2 * 1e-6;
+        constexpr emblib::stdg_t noise_density(75 * 1e-6);
+        // Change to the same units as the data type
+        return emblib::mpss_t(noise_density).value();
     }
 
-    bool read_all_axes(float (&out_data)[3]) noexcept override;
+    bool read_axis(axis_e axis, emblib::mpss_t& out) noexcept override
+    {
+        // Reading a single axis not used
+        return false;
+    }
+
+    bool read(mp::vector<emblib::mpss_t, 3>& out) noexcept override;
 
 private:
     bridge& m_bridge;

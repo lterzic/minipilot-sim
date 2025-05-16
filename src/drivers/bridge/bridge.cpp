@@ -37,7 +37,7 @@ pb::Response bridge::send_request(const pb::Request& request) noexcept
     ssize_t recv_size = 0;
     while (recv_size <= 0) {
         // TODO: Add a read timeout
-        recv_size = m_socket.read(buffer, RECV_BUFFER_SIZE);
+        recv_size = m_socket.read(buffer, RECV_BUFFER_SIZE, emblib::MILLISECONDS_MAX);
     }
     
     if (!response.ParseFromArray(buffer, recv_size)) {
