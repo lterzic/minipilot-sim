@@ -1,7 +1,7 @@
+#include "drivers/bridge/bridge.hpp"
 #include "drivers/bridge/stdio_dev.hpp"
 #include "drivers/sensors/accelerometer_pb.hpp"
 #include "drivers/sensors/gyroscope_pb.hpp"
-#include "unity/state_pb.hpp"
 #include "unity/vehicles/quad_x.hpp"
 #include <mp/state_estimators.hpp>
 #include <mp/mp.hpp>
@@ -20,7 +20,6 @@ int main()
     static mpsim::accelerometer_pb accel(bridge);
     static mpsim::gyroscope_pb gyro(bridge);
     
-    // static mpsim::unity::state_pb state_est(bridge);
     static mpsim::unity::quad_x unity_quad_x(bridge);
     static mp::ekf_inertial ekf_inertial(unity_quad_x);
     static mp::ekf_ahrs ekf_ahrs;

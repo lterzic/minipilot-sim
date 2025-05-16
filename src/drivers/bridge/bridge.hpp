@@ -1,8 +1,8 @@
 #pragma once
 
-#include "pb/bridge.pb.h"
 #include "drivers/bridge/udp_dev.hpp"
-#include "emblib/rtos/mutex.hpp"
+#include "pb/mpsim/bridge.pb.h"
+#include <emblib/rtos/mutex.hpp>
 
 namespace mpsim {
 
@@ -20,7 +20,7 @@ public:
      * 
      * @todo Set the timeout as a parameter with a default value
      */
-    pb::Response send_request(const pb::Request& request) noexcept;
+    pb::mpsim::Response send_request(const pb::mpsim::Request& request) noexcept;
 
 private:
     udp_dev m_socket;

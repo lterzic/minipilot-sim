@@ -5,15 +5,13 @@ namespace mpsim {
 bool accelerometer_pb::read(mp::vector<emblib::mpss_t, 3>& out) noexcept
 {
     // Send a protobuf message with a read acc request and wait for a response
-    pb::Request request;
+    pb::mpsim::Request request;
     request.mutable_read_acc();
 
-    pb::Response response = m_bridge.send_request(request);
-    if (!response.success() || response.response_type_case() != pb::Response::ResponseTypeCase::kReadAcc)
+    pb::mpsim::Response response = m_bridge.send_request(request);
+    if (!response.success() || response.response_type_case() != pb::mpsim::Response::ResponseTypeCase::kReadAcc)
         return false;
 
-    // Put the data in the output array in the default order (x, y, z)
-    // This can be rearranged in the mp::task_accelerometer if needed
     // TODO: Remove unit constructors
     out((int)axis_e::X) = emblib::mpss_t(response.read_acc().acc().x());
     out((int)axis_e::Y) = emblib::mpss_t(response.read_acc().acc().y());

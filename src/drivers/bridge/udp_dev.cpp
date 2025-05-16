@@ -37,6 +37,7 @@ ssize_t udp_dev::write(const char* data, size_t size, emblib::milliseconds_t tim
 
 ssize_t udp_dev::read(char* data, size_t size, emblib::milliseconds_t timeout) noexcept
 {
+    // TODO: Implement timeout
     return recvfrom(m_socket, data, size, 0, NULL, 0);
 }
 
@@ -52,7 +53,7 @@ bool udp_dev::read_async(char* data, size_t size, callback_t callback) noexcept
     //     m_read_future.wait();
     // }
     m_read_future = std::async(std::launch::async, [this, &data, &size, &callback]{
-        callback(read(data, size, emblib::milliseconds_t(0)));
+        callback(read(data, size, emblib::MILLISECONDS_MAX));
     });
     return true;
 }

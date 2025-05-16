@@ -19,7 +19,6 @@ add_executable(minipilot-sim
     src/drivers/sensors/accelerometer_pb.cpp
     src/drivers/sensors/gyroscope_pb.cpp
     src/drivers/actuators/motor_pb.cpp
-    src/unity/state_pb.cpp
     src/main.cpp
 )
 

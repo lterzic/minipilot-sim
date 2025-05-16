@@ -3,6 +3,7 @@
 #include "drivers/bridge/bridge.hpp"
 #include <emblib/driver/actuator/motor.hpp>
 #include <emblib/dsp/iir.hpp>
+#include <chrono>
 
 namespace mpsim {
 
