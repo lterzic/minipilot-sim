@@ -1,41 +1,48 @@
 # Used to compile protobuf files on every build
 
-# Path to the build protobuf compiler
-set(PROTOC ${PROJECT_BINARY_DIR}/lib/protobuf/protoc)
+# Path to protoc
+set(PROTOC "${PROJECT_SOURCE_DIR}/lib/minipilot-proto/lib/protoc")
 
-set(PROTO_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-set(PROTO_CPP_OUT ${CMAKE_CURRENT_SOURCE_DIR}/out/cpp/pb)
-set(PROTO_PY_OUT ${CMAKE_CURRENT_SOURCE_DIR}/out/py)
-set(PROTO_CS_OUT ${CMAKE_CURRENT_SOURCE_DIR}/out/cs)
+# Set paths
+# Generated files are placed in the pb directory so that their
+# includes would have a prefix to differentiate from source files
+set(PROTO_SRC_DIR "${PROJECT_SOURCE_DIR}/lib/minipilot-proto/src")
+set(PROTO_GEN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/gen/pb")
 
-make_directory(${PROTO_CPP_OUT})
-make_directory(${PROTO_PY_OUT})
-make_directory(${PROTO_CS_OUT})
+# Find all proto files recursively
+file(GLOB_RECURSE PROTO_FILES "${PROTO_SRC_DIR}/*.proto")
 
+# List of generated files
+set(GENERATED_FILES "")
 
-# Get all protobuf src files
-file(GLOB PROTO_SRCS ${PROTO_SRC_DIR}/*.proto)
-
-# List of all generated cpp files (1 for each proto source)
-set(PROTO_CC_SRCS "")
-# For each source proto file, create a command which generates all the proto output files
-foreach(_SRC ${PROTO_SRCS})
-    # Replace the .proto extension in the filename with .pb.cc
-    get_filename_component(_SRC_NAME ${_SRC} NAME_WE)
-    set(_PROTO_CC ${PROTO_CPP_OUT}/${_SRC_NAME}.pb.cc)
-
-    # Generate output files from this proto source
+# Process each proto file
+foreach(PROTO_FILE ${PROTO_FILES})
+    # Get relative path to maintain directory structure
+    file(RELATIVE_PATH REL_PATH ${PROTO_SRC_DIR} ${PROTO_FILE})
+    get_filename_component(REL_DIR ${REL_PATH} DIRECTORY)
+    get_filename_component(FILE_NAME ${PROTO_FILE} NAME_WE)
+    
+    # Define the output file and directory
+    set(GEN_DIR ${PROTO_GEN_DIR}/${REL_DIR})
+    set(GEN_FILE "${GEN_DIR}/${FILE_NAME}.pb.cc")
+    file(MAKE_DIRECTORY ${GEN_DIR})
+    
+    # Generate output files
     add_custom_command(
-        OUTPUT ${_PROTO_CC}
-        DEPENDS ${_SRC}
-        COMMAND ${PROTOC} --cpp_out=${PROTO_CPP_OUT} --python_out=${PROTO_PY_OUT} --csharp_out=${PROTO_CS_OUT} -I=${PROTO_SRC_DIR} ${_SRC}
+        OUTPUT ${GEN_FILE}
+        DEPENDS ${PROTO_FILE}
+        COMMAND ${PROTOC}
+            --cpp_out=${PROTO_GEN_DIR}
+            -I=${PROTO_SRC_DIR}
+            ${PROTO_FILE}
     )
-    # Add this cpp files to the list to be used by the static library
-    list(APPEND PROTO_CC_SRCS ${_PROTO_CC})
+    
+    # Add to list of generated files
+    list(APPEND GENERATED_FILES ${GEN_FILE})
 endforeach()
 
 # Static library with all the generated cpp files
-add_library(minipilot-sim-proto STATIC ${PROTO_CC_SRCS})
+add_library(minipilot-sim-proto STATIC ${GENERATED_FILES})
 target_link_libraries(minipilot-sim-proto PUBLIC libprotobuf)
-target_include_directories(minipilot-sim-proto PUBLIC ${PROTO_CPP_OUT}/..)
-add_dependencies(minipilot-sim-proto protoc)
+target_include_directories(minipilot-sim-proto PUBLIC ${PROTO_GEN_DIR})
+target_include_directories(minipilot-sim-proto INTERFACE ${PROTO_GEN_DIR}/..)

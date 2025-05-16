@@ -6,14 +6,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(minipilot-sim VERSION 1.0)
 
-# Protobuf options
-set(protobuf_INSTALL OFF)
-set(protobuf_BUILD_TESTS OFF)
-set(protobuf_BUILD_LIBUPB OFF)
-
 # Dependencies
 add_subdirectory("lib/minipilot")
-add_subdirectory("lib/protobuf")
 
 # Generate protobuf cpp files from sources
 add_subdirectory("protobuf")
