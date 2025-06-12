@@ -1,12 +1,12 @@
 #pragma once
 
-#include <emblib/driver/io/char_dev.hpp>
+#include <emblib/driver/io/io_dev.hpp>
 #include <arpa/inet.h>
 #include <future>
 
 namespace mpsim {
 
-class udp_dev : public emblib::char_dev {
+class udp_dev : public emblib::io_dev {
 
 public:
     explicit udp_dev(const char* send_ip, int send_port, int bind_port = -1);

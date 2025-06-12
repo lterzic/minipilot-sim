@@ -5,9 +5,23 @@
 #include "unity/vehicles/quad_x.hpp"
 #include <mp/state_estimators.hpp>
 #include <mp/mp.hpp>
+#include <chrono>
 
 static const char* WINDOWS_IP = "172.21.48.1";
 static const char* LOCALHOST_IP = "127.0.0.1";
+
+namespace mp {
+
+static const auto start_time = std::chrono::steady_clock::now();
+
+emblib::milliseconds_t get_time_since_start() noexcept
+{
+    const auto now = std::chrono::steady_clock::now();
+    const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start_time);
+    return emblib::milliseconds_t(elapsed);
+}
+
+}
 
 int main()
 {

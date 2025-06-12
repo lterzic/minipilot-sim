@@ -52,7 +52,7 @@ bool udp_dev::read_async(char* data, size_t size, callback_t callback) noexcept
     // if (m_read_future.valid()) {
     //     m_read_future.wait();
     // }
-    m_read_future = std::async(std::launch::async, [this, &data, &size, &callback]{
+    m_read_future = std::async(std::launch::async, [this, data, size, callback]{
         callback(read(data, size, emblib::MILLISECONDS_MAX));
     });
     return true;

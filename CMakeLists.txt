@@ -9,6 +9,21 @@ project(minipilot-sim VERSION 1.0)
 # Dependencies
 add_subdirectory("lib/minipilot")
 
+# Build protobuf lib from minipilot-proto since
+# it's not built by default
+set(protobuf_INSTALL                    OFF)
+set(protobuf_BUILD_TESTS                OFF)
+set(protobuf_BUILD_CONFORMANCE          OFF)
+set(protobuf_BUILD_EXAMPLES             OFF)
+set(protobuf_BUILD_PROTOBUF_BINARIES    ON)
+set(protobuf_BUILD_PROTOC_BINARIES      OFF)
+set(protobuf_BUILD_LIBPROTOC            OFF)
+set(protobuf_BUILD_LIBUPB               OFF)
+set(protobuf_DISABLE_RTTI               OFF)
+set(protobuf_TEST_XML_OUTDIR            OFF)
+set(protobuf_ALLOW_CCACHE               OFF)
+# Add the protobuf library
+add_subdirectory("${PROJECT_SOURCE_DIR}/lib/minipilot-proto/lib/protobuf")
 # Generate protobuf cpp files from sources
 add_subdirectory("protobuf")
 
