@@ -36,7 +36,6 @@ int main()
     
     static mpsim::unity::quad_x unity_quad_x(bridge);
     static mp::ekf_inertial ekf_inertial(unity_quad_x);
-    static mp::ekf_ahrs ekf_ahrs;
 
     mp::devices_s device_drivers {
         .accelerometer = {.sensor = accel, .transform = mpsim::unity::MP_TRANSFORM},
@@ -46,5 +45,5 @@ int main()
         .receiver_device = receiver_dev
     };
 
-    return mp::main(device_drivers, ekf_ahrs, unity_quad_x);
+    return mp::main(device_drivers, ekf_inertial, unity_quad_x);
 }
