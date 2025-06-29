@@ -6,7 +6,7 @@
 
 namespace mpsim {
 
-class gyroscope_pb : public emblib::gyroscope<emblib::rps_t> {
+class gyroscope_pb : public emblib::gyroscope {
 
 public:
     explicit gyroscope_pb(bridge& bridge) :
@@ -38,7 +38,7 @@ public:
     float get_noise_density() const noexcept override
     {
         // Noise density in milli dps per sqrt(Hz) as per datasheet of LSM6DSOX
-        constexpr emblib::dps_t noise_density(3.8 * 1e-3);
+        constexpr emblib::units::degrees_per_second<float> noise_density(3.8 * 1e-3);
         // Change to the same units as the data type
         return emblib::rps_t(noise_density).value();
     }

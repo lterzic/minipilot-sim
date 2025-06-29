@@ -14,11 +14,11 @@ namespace mp {
 
 static const auto start_time = std::chrono::steady_clock::now();
 
-emblib::milliseconds_t get_time_since_start() noexcept
+emblib::units::milliseconds<size_t> get_time_since_start() noexcept
 {
     const auto now = std::chrono::steady_clock::now();
     const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start_time);
-    return emblib::milliseconds_t(elapsed);
+    return emblib::units::milliseconds<size_t>(elapsed);
 }
 
 }

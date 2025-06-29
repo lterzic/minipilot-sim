@@ -30,30 +30,24 @@ udp_dev::~udp_dev()
     close(m_socket);
 }
 
-ssize_t udp_dev::write(const char* data, size_t size, emblib::milliseconds_t timeout) noexcept
+ssize_t udp_dev::write(const char* data, size_t size, emblib::io::timeout_t timeout) noexcept
 {
     return sendto(m_socket, data, size, 0, (sockaddr*)&m_send_endpoint, sizeof(m_send_endpoint));
 }
 
-ssize_t udp_dev::read(char* data, size_t size, emblib::milliseconds_t timeout) noexcept
+ssize_t udp_dev::read(char* data, size_t size, emblib::io::timeout_t timeout) noexcept
 {
     // TODO: Implement timeout
     return recvfrom(m_socket, data, size, 0, NULL, 0);
 }
 
-bool udp_dev::write_async(const char* data, size_t size, callback_t callback) noexcept
-{
-    callback(write(data, size));
-    return true;
-}
-
-bool udp_dev::read_async(char* data, size_t size, callback_t callback) noexcept
+bool udp_dev::read_async(char* data, size_t size, emblib::io::callback_t callback) noexcept
 {
     // if (m_read_future.valid()) {
     //     m_read_future.wait();
     // }
     m_read_future = std::async(std::launch::async, [this, data, size, callback]{
-        callback(read(data, size, emblib::MILLISECONDS_MAX));
+        callback(read(data, size, emblib::io::timeout_t(-1)));
     });
     return true;
 }

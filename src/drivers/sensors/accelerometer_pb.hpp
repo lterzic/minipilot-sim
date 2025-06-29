@@ -6,7 +6,7 @@
 
 namespace mpsim {
 
-class accelerometer_pb : public emblib::accelerometer<emblib::mpss_t> {
+class accelerometer_pb : public emblib::accelerometer {
 
 public:
     explicit accelerometer_pb(bridge& bridge) :
@@ -38,7 +38,7 @@ public:
     float get_noise_density() const noexcept override
     {
         // Noise density in micro gs per sqrt(Hz) as per datasheet of LSM6DSOX
-        constexpr emblib::stdg_t noise_density(75 * 1e-6);
+        constexpr emblib::units::standard_gravity<float> noise_density(75 * 1e-6);
         // Change to the same units as the data type
         return emblib::mpss_t(noise_density).value();
     }
