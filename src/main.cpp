@@ -4,6 +4,7 @@
 #include "drivers/sensors/gyroscope_pb.hpp"
 #include "unity/vehicles/quad_x.hpp"
 #include <mp/state_estimators.hpp>
+#include <mp/log_handlers.hpp>
 #include <mp/mp.hpp>
 #include <chrono>
 
@@ -26,6 +27,12 @@ emblib::units::milliseconds<size_t> get_time_since_start() noexcept
 int main()
 {
     static mpsim::stdio_dev stdio;
+    static mp::log_device stdio_log_dev(stdio, mp::log_level_e::DEBUG);
+    
+    static etl::list log_string_devices {&stdio_log_dev};
+    static mp::log_handler_string string_handler(log_string_devices);
+
+    static auto log_handlers = etl::make_list<mp::log_handler*>(&string_handler);
     
     static mpsim::udp_dev telemetry_dev(LOCALHOST_IP, 25565);
     static mpsim::udp_dev receiver_dev(LOCALHOST_IP, 25564, 25564);
@@ -40,9 +47,9 @@ int main()
     mp::devices_s device_drivers {
         .accelerometer = {.sensor = accel, .transform = mpsim::unity::MP_TRANSFORM},
         .gyroscope = {.sensor = gyro, .transform = -mpsim::unity::MP_TRANSFORM},
-        .log_device = &stdio,
         .telemetry_device = &telemetry_dev,
-        .receiver_device = receiver_dev
+        .receiver_device = receiver_dev,
+        .log_handlers = log_handlers
     };
 
     return mp::main(device_drivers, ekf_inertial, unity_quad_x);
