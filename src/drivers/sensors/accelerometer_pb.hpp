@@ -13,6 +13,11 @@ public:
         m_bridge(bridge)
     {}
 
+    const char* get_name() const noexcept override
+    {
+        return "PB Accel";
+    }
+
     bool probe() noexcept override
     {
         return true;
@@ -43,13 +48,13 @@ public:
         return emblib::mpss_t(noise_density).value();
     }
 
-    bool read_axis(axis_e axis, emblib::mpss_t& out) noexcept override
+    bool read_axis(size_t axis, emblib::mpss_t& out) noexcept override
     {
         // Reading a single axis not used
         return false;
     }
 
-    bool read(mp::vector<emblib::mpss_t, 3>& out) noexcept override;
+    bool read(emblib::accelerometer::data_t& out) noexcept override;
 
 private:
     bridge& m_bridge;

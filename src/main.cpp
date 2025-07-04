@@ -3,6 +3,7 @@
 #include "drivers/sensors/accelerometer_pb.hpp"
 #include "drivers/sensors/gyroscope_pb.hpp"
 #include "unity/vehicles/quad_x.hpp"
+#include <mp/sensors.hpp>
 #include <mp/state_estimators.hpp>
 #include <mp/log_handlers.hpp>
 #include <mp/mp.hpp>
@@ -39,18 +40,32 @@ int main()
     static mpsim::bridge bridge(LOCALHOST_IP, 5000);
 
     static mpsim::accelerometer_pb accel(bridge);
+    static mp::accelerometer_reader accelerometer_reader(mp::accelerometer_config_s {
+        .device = accel,
+        .mutex = nullptr,
+        .transform = mpsim::unity::MP_TRANSFORM
+    });
+
     static mpsim::gyroscope_pb gyro(bridge);
+    static mp::gyroscope_reader gyroscope_reader(mp::gyroscope_config_s {
+        .device = gyro,
+        .mutex = nullptr,
+        .transform = -mpsim::unity::MP_TRANSFORM
+    });
+
+    static mp::sensor_readers_s readers {
+        .accelerometer = &accelerometer_reader,
+        .gyroscope = &gyroscope_reader
+    };
     
     static mpsim::unity::quad_x unity_quad_x(bridge);
     static mp::ekf_inertial ekf_inertial(unity_quad_x);
 
     mp::devices_s device_drivers {
-        .accelerometer = {.sensor = accel, .transform = mpsim::unity::MP_TRANSFORM},
-        .gyroscope = {.sensor = gyro, .transform = -mpsim::unity::MP_TRANSFORM},
         .telemetry_device = &telemetry_dev,
         .receiver_device = receiver_dev,
         .log_handlers = log_handlers
     };
 
-    return mp::main(device_drivers, ekf_inertial, unity_quad_x);
+    return mp::main(readers, device_drivers, ekf_inertial, unity_quad_x);
 }
