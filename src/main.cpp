@@ -2,6 +2,7 @@
 #include "drivers/bridge/stdio_dev.hpp"
 #include "drivers/sensors/accelerometer_pb.hpp"
 #include "drivers/sensors/gyroscope_pb.hpp"
+#include "drivers/state/state_pb.hpp"
 #include "unity/constants.hpp"
 #include "unity/vehicles/quad_x.hpp"
 #include <mp/comm.hpp>
@@ -72,14 +73,20 @@ int main()
     // Using EKF as the state estimator by default
     static mp::model_simple simple_quad_model(0.01, 0.01);
     static mp::ekf ekf(sensor_manager, simple_quad_model);
+    
+    // Exact state estimator for use while testing control
+    static mpsim::state_pb state_pb(bridge);
+
+    // Switch to state_pb for exact state
+    static mp::state_estimator& state_estimator = ekf;
 
     // Using the PID controller by default
-    static mp::copter_control_pid controller(unity_quad_x, ekf, mpsim::unity::quad_x::PARAMETERS);
+    static mp::copter_control_pid controller(unity_quad_x, state_estimator, mpsim::unity::quad_x::PARAMETERS);
     static mp::rx_handler_command rx_command(&controller);
     rx.set_handler(pb_mp_UplinkMessage_command_tag, &rx_command);
 
     // Setup transmitter modules
-    static mp::telemetry telemetry(tx, sensor_manager, ekf);
+    static mp::telemetry telemetry(tx, sensor_manager, state_estimator);
 
     // Give execution control to the RTOS
     log_info("Starting the scheduler...");
