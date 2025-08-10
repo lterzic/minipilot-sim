@@ -1,7 +1,6 @@
 #pragma once
 
 #include "drivers/bridge/bridge.hpp"
-#include <mp/math.hpp>
 #include <emblib/driver/sensor/gyroscope.hpp>
 
 namespace mpsim {

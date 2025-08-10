@@ -1,7 +1,6 @@
 #pragma once
 
-#include <mp/math.hpp>
-#include <mp/constants.hpp>
+#include <mp/utils.hpp>
 
 namespace mpsim::unity {
 

@@ -2,43 +2,30 @@
 #include "drivers/bridge/stdio_dev.hpp"
 #include "drivers/sensors/accelerometer_pb.hpp"
 #include "drivers/sensors/gyroscope_pb.hpp"
+#include "unity/constants.hpp"
 #include "unity/vehicles/quad_x.hpp"
+#include <mp/comm.hpp>
+#include <mp/logging.hpp>
 #include <mp/sensors.hpp>
-#include <mp/state_estimators.hpp>
-#include <mp/log_handlers.hpp>
-#include <mp/mp.hpp>
-#include <chrono>
+#include <mp/state.hpp>
 
-static const char* WINDOWS_IP = "172.21.48.1";
-static const char* LOCALHOST_IP = "127.0.0.1";
+static const char* WINDOWS_IP       = "172.21.48.1";
+static const char* LOCALHOST_IP     = "127.0.0.1";
 
-namespace mp {
+static const uint16_t LINK_TX_PORT  = 25565;
+static const uint16_t LINK_RX_PORT  = 25564;
+static const uint16_t BRIDGE_PORT   = 5000;
 
-static const auto start_time = std::chrono::steady_clock::now();
-
-emblib::units::milliseconds<size_t> get_time_since_start() noexcept
+emblib::units::milliseconds<size_t> mp::get_time_since_start() noexcept
 {
+    static const auto start = std::chrono::steady_clock::now();
     const auto now = std::chrono::steady_clock::now();
-    const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start_time);
+    const auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - start);
     return emblib::units::milliseconds<size_t>(elapsed);
 }
 
-}
-
-int main()
+static mp::sensor_manager& create_sensors(mpsim::bridge& bridge)
 {
-    static mpsim::stdio_dev stdio;
-    static mp::log_device stdio_log_dev(stdio, mp::log_level_e::DEBUG);
-    
-    static etl::list log_string_devices {&stdio_log_dev};
-    static mp::log_handler_string string_handler(log_string_devices);
-
-    static auto log_handlers = etl::make_list<mp::log_handler*>(&string_handler);
-    
-    static mpsim::udp_dev telemetry_dev(LOCALHOST_IP, 25565);
-    static mpsim::udp_dev receiver_dev(LOCALHOST_IP, 25564, 25564);
-    static mpsim::bridge bridge(LOCALHOST_IP, 5000);
-
     static mpsim::accelerometer_pb accel(bridge);
     static mp::accelerometer_reader accelerometer_reader(mp::accelerometer_config_s {
         .device = accel,
@@ -53,19 +40,52 @@ int main()
         .transform = -mpsim::unity::MP_TRANSFORM
     });
 
-    static mp::sensor_readers_s readers {
+    static mp::sensor_manager sensor_manager({
         .accelerometer = &accelerometer_reader,
         .gyroscope = &gyroscope_reader
-    };
+    });
+
+    return sensor_manager;
+}
+
+int main()
+{
+    // Create RX and TX modules for link with the user
+    static mpsim::udp_dev link_dev(LOCALHOST_IP, LINK_TX_PORT, LINK_RX_PORT);
+    static mp::pb_rx rx(link_dev);
+    static mp::pb_tx tx(link_dev);
+
+    // Default logger output is the protobuf link
+    static mp::log_sink_pb sink_pb(tx);
+    mp::logger::get_instance().add_sink(sink_pb);
+
+    // Standard output is available in the simulator
+    static mpsim::stdio_dev stdio;
+    static mp::log_sink_text sink_stdout(stdio);
+    mp::logger::get_instance().add_sink(sink_stdout);
     
+    // Create the simulated vehicle and sensors
+    static mpsim::bridge bridge(LOCALHOST_IP, BRIDGE_PORT);
+    static mp::sensor_manager& sensor_manager = create_sensors(bridge);
     static mpsim::unity::quad_x unity_quad_x(bridge);
-    static mp::ekf_inertial ekf_inertial(unity_quad_x);
 
-    mp::devices_s device_drivers {
-        .telemetry_device = &telemetry_dev,
-        .receiver_device = receiver_dev,
-        .log_handlers = log_handlers
-    };
+    // Using EKF as the state estimator by default
+    static mp::model_simple simple_quad_model(0.01, 0.01);
+    static mp::ekf ekf(sensor_manager, simple_quad_model);
 
-    return mp::main(readers, device_drivers, ekf_inertial, unity_quad_x);
+    // Using the PID controller by default
+    static mp::copter_control_pid controller(unity_quad_x, ekf, mpsim::unity::quad_x::PARAMETERS);
+    static mp::rx_handler_command rx_command(&controller);
+    rx.set_handler(pb_mp_UplinkMessage_command_tag, &rx_command);
+
+    // Setup transmitter modules
+    static mp::telemetry telemetry(tx, sensor_manager, ekf);
+
+    // Give execution control to the RTOS
+    log_info("Starting the scheduler...");
+    emblib::task::start_scheduler();
+
+    // Should never reach this
+    return 1;
+
 }
