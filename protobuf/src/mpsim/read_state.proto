@@ -1,0 +1,12 @@
+syntax = "proto3";
+package pb.mpsim;
+
+import "mp/telemetry/state.proto";
+
+message RequestReadState {
+
+}
+
+message ResponseReadState {
+    mp.State state = 1;
+}

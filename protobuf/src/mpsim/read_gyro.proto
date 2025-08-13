@@ -1,0 +1,12 @@
+syntax = "proto3";
+package pb.mpsim;
+
+import "mp/common/types.proto";
+
+message RequestReadGyro {
+    
+}
+
+message ResponseReadGyro {
+    mp.Vector3f ang_vel = 1;
+}
