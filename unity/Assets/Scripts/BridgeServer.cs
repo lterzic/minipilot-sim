@@ -22,7 +22,7 @@ public class BridgeServer : MonoBehaviour
     // Used for getting the real state of the vehicle
     public Rigidbody m_vehicleRigidbody;
     // This is updated in FixedUpdate and sent on request
-    private Pb.Mp.State m_state;
+    private Mp.Pb.State m_state;
 
     // Start is called before the first frame update
     void Start()
@@ -36,7 +36,7 @@ public class BridgeServer : MonoBehaviour
 
     void FixedUpdate()
     {
-        m_state = new Pb.Mp.State {
+        m_state = new Mp.Pb.State {
             Position = ProtobufUtils.CreatePbVector(m_vehicleRigidbody.position),
             Velocity = ProtobufUtils.CreatePbVector(m_vehicleRigidbody.velocity),
             Acceleration = ProtobufUtils.CreatePbVector(m_accelerometer.GetRealAcceleration()),
@@ -52,34 +52,34 @@ public class BridgeServer : MonoBehaviour
             byte[] buffer = m_listener.Receive(ref ipEndPoint);
             
             // Parse the received request
-            Pb.Mpsim.Request request = Pb.Mpsim.Request.Parser.ParseFrom(buffer);
-            Pb.Mpsim.Response response = new Pb.Mpsim.Response();
+            Mp.Pb.Sim.Request request = Mp.Pb.Sim.Request.Parser.ParseFrom(buffer);
+            Mp.Pb.Sim.Response response = new Mp.Pb.Sim.Response();
             response.Success = false;
 
             switch (request.RequestTypeCase) {
-                case Pb.Mpsim.Request.RequestTypeOneofCase.ReadState:
-                    response.ReadState = new Pb.Mpsim.ResponseReadState {State = m_state};
+                case Mp.Pb.Sim.Request.RequestTypeOneofCase.ReadState:
+                    response.ReadState = new Mp.Pb.Sim.ResponseReadState {State = m_state};
                     response.Success = true;
                     break;
-                case Pb.Mpsim.Request.RequestTypeOneofCase.ReadAcc:
-                    response.ReadAcc = new Pb.Mpsim.ResponseReadAcc {Acc = ProtobufUtils.CreatePbVector(m_accelerometer.GetAcceleration())};
+                case Mp.Pb.Sim.Request.RequestTypeOneofCase.ReadAcc:
+                    response.ReadAcc = new Mp.Pb.Sim.ResponseReadAcc {Acc = ProtobufUtils.CreatePbVector(m_accelerometer.GetAcceleration())};
                     response.Success = true;
                     break;
-                case Pb.Mpsim.Request.RequestTypeOneofCase.ReadGyro:
-                    response.ReadGyro = new Pb.Mpsim.ResponseReadGyro {AngVel = ProtobufUtils.CreatePbVector(m_gyroscope.GetAngularVelocity())};
+                case Mp.Pb.Sim.Request.RequestTypeOneofCase.ReadGyro:
+                    response.ReadGyro = new Mp.Pb.Sim.ResponseReadGyro {AngVel = ProtobufUtils.CreatePbVector(m_gyroscope.GetAngularVelocity())};
                     response.Success = true;
                     break;
-                case Pb.Mpsim.Request.RequestTypeOneofCase.WriteMotor:
+                case Mp.Pb.Sim.Request.RequestTypeOneofCase.WriteMotor:
                     uint motorIndex = request.WriteMotor.MotorIndex;
                     if (motorIndex >= m_motors.Length) {
                         Debug.LogError("Trying to access non-existend motor");
                         break;
                     }
                     m_motors[motorIndex].SetThrottle(request.WriteMotor.Throttle);
-                    response.WriteMotor = new Pb.Mpsim.ResponseWriteMotor {CurrentThrottle = m_motors[motorIndex].GetThrottle()};
+                    response.WriteMotor = new Mp.Pb.Sim.ResponseWriteMotor {CurrentThrottle = m_motors[motorIndex].GetThrottle()};
                     response.Success = true;
                     break;
-                case Pb.Mpsim.Request.RequestTypeOneofCase.None:
+                case Mp.Pb.Sim.Request.RequestTypeOneofCase.None:
                 default:
                     break;
             }
